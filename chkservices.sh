@@ -17,11 +17,11 @@ LOG()
 # Try to recover - start services function
 START_SERVICE() {
         local SERVICE=$1
-        /etc/init.d/$SERVICE start 1>/dev/null 2>/dev/null
+        /etc/init.d/$SERVICE start > /dev/null 2>&1
         # Some services like httpd could return status error if test just after start
         # So lets sleep a little bit
         sleep 3
-        /etc/init.d/$SERVICE status 1>/dev/null 2>/dev/null
+        /etc/init.d/$SERVICE status > /dev/null 2>&1
         if [ $? -eq 0 ]; then
                 LOG "The service $SERVICE was started successfully."
                 local MAIL_BODY="The service $SERVICE has stopped, and was started successfuly by chkservices. Have a look on $HOSTNAME logs, and try to figure out what happened."
@@ -39,7 +39,7 @@ START_SERVICE() {
 # Main
 for i in `echo $SERVICES`; do
 # If service exists, get status
-test -e /etc/init.d/$i 1>/dev/null 2>/dev/null
+test -e /etc/init.d/$i > /dev/null 2>&1
 if [ "$?" -eq "0" ]; then
         /etc/init.d/$i status 1> /dev/null 2> /dev/null
         # If is not running, try to start
