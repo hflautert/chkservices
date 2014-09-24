@@ -1,3 +1,9 @@
+Changing
+=====
+
+Script is beeing reformulated to run like a service, things will be clear ASAP.
+
+
 ChkServices
 =====
 

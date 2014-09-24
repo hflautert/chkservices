@@ -5,8 +5,15 @@
 ### CUSTOM FIELDS
 # Add services separeted with space, eg: "httpd squid"
 SERVICES="httpd squid"
-MAIL_TO="sysadmin@company.com"
+INTERVAL="120"
+MAIL_TO="hflautert@gmail.com"
+MAIL_FROM="root@server.local" # This way goes well on gmail servers.
+FILE_PID="/var/run/chkservices.pid"
 ### END OF CUSTOM FIELDS
+
+#Save this file on /usr/bin/
+#This is the program, it will be manitulated by:
+#/etc/init.d/chkservices
 
 # Log function
 LOG()
@@ -17,29 +24,41 @@ LOG()
 # Try to recover - start services function
 START_SERVICE() {
         local SERVICE=$1
-        /etc/init.d/$SERVICE start > /dev/null 2>&1
+        /etc/init.d/$SERVICE start 1>/dev/null 2>/dev/null
         # Some services like httpd could return status error if test just after start
         # So lets sleep a little bit
         sleep 3
-        /etc/init.d/$SERVICE status > /dev/null 2>&1
+        /etc/init.d/$SERVICE status 1>/dev/null 2>/dev/null
         if [ $? -eq 0 ]; then
                 LOG "The service $SERVICE was started successfully."
-                local MAIL_BODY="The service $SERVICE has stopped, and was started successfuly by chkservices. Have a look on $HOSTNAME logs, and try to figure out what happened."
+                local MAIL_BODY="The service $SERVICE has stopped, and was started successfuly by chkservices. Take a look on $HOSTNAME logs, and try to figure out what happened."
                 local SUBJECT="Service $SERVICE has restarted on $HOSTNAME"
-                echo $MAIL_BODY | mail -s "$SUBJECT" $MAIL_TO
+                echo "$MAIL_BODY" | mail -r $MAIL_FROM -s "$SUBJECT" $MAIL_TO
         else
                 LOG "The service $SERVICE is stopped and need mantaince to get start."
                 local MAIL_BODY="The service $SERVICE is stopped and need mantaince to get start. Access $HOSTNAME and check it out!"
                 local SUBJECT="Service $SERVICE is stopped on $HOSTNAME"
-                echo $MAIL_BODY | mail -s "$SUBJECT" $MAIL_TO
+                echo "$MAIL_BODY" | mail -r $MAIL_FROM -s "$SUBJECT" $MAIL_TO
                 #XXX - Develop kill -9, remove pid, something like a powerfull restart
         fi
 }
+check_for_pid () {
+    if [ -e "$FILE_PID" ]
+    then
+        LOG  "Uepas!! The Pid File $FILE_PID already exists! See you later!!"
+        exit 1
+    fi
+}
 
 # Main
+TEST_SERVICE()
+
+{
+
 for i in `echo $SERVICES`; do
+
 # If service exists, get status
-test -e /etc/init.d/$i > /dev/null 2>&1
+test -e /etc/init.d/$i 1>/dev/null 2>/dev/null
 if [ "$?" -eq "0" ]; then
         /etc/init.d/$i status 1> /dev/null 2> /dev/null
         # If is not running, try to start
@@ -51,3 +70,18 @@ if [ "$?" -eq "0" ]; then
                 LOG "The declared service $i, was not found."
         fi
 done
+
+sleep $INTERVAL
+
+}
+start_chkservices () {
+    LOG "Starting up chkservices."
+    while true
+    do
+        TEST_SERVICE
+    done
+}
+
+check_for_pid
+start_chkservices &
+echo "$!" > "$FILE_PID"
