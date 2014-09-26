@@ -2,8 +2,11 @@ Install
 =====
 
 wget https://raw.githubusercontent.com/surfingtux/chkservices/master/download/chkservices.tgz
+
 tar xvf chkservices.tgz
+
 cd chkservices
+
 ./install.sh
 
 
@@ -17,4 +20,5 @@ Enable startup and service management
 =====
 
 chkconfig chkservices on
+
 service chkservices start/stop
