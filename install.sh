@@ -25,10 +25,8 @@ then
     echo "-------------------------------------------------------------------"
     read
     cp "$CONFIG" "$CONFIG_TARGET/$CONFIG.new"
-    cp "$TARGETS" "$CONFIG_TARGET/$TARGETS.new"
 else
     cp "$CONFIG" "$CONFIG_TARGET/$CONFIG"
-    cp "$TARGETS" "$CONFIG_TARGET/$TARGETS" 
 fi
 
 chmod 755 "$BINARY_TARGET/$BINARY"
