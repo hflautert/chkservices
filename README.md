@@ -1,3 +1,11 @@
+System requirements
+=====
+- CentOS 6.x or RedHat like
+
+- yum install mailx
+
+- postfix or other MTA running
+
 Install
 =====
 
