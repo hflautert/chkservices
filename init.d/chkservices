@@ -10,13 +10,6 @@
 #
 ### END INIT INFO
 
-#Save this file on
-#/etc/init.d/
-
-#So you can use like a service
-#chkconfig chkservices on
-#service chkservices start
-
 FILE_PID=/var/run/chkservices.pid
 
 stop_chkservices () {
@@ -27,7 +20,7 @@ stop_chkservices () {
         kill `cat "$FILE_PID"`
         rm "$FILE_PID"
     else
-        echo "CHKSERVICES is not running."
+        echo "Chkservices is not running."
         exit 1
     fi
 }
@@ -36,7 +29,7 @@ start_chkservices () {
 
     if [ -e "$FILE_PID" ]
     then
-        echo "CHKSERVICES is already running."
+        echo "Chkservices is already running."
         exit 1
     else
         echo "Starting chkservices..."
