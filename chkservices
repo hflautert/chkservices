@@ -2,18 +2,11 @@
 # Script to check services and start when something stops
 # hflautert@gmail.com
 
-### CUSTOM FIELDS
-# Add services separeted with space, eg: "httpd squid"
-SERVICES="httpd squid"
-INTERVAL="120"
-MAIL_TO="hflautert@gmail.com"
-MAIL_FROM="root@server.local" # This way goes well on gmail servers.
 FILE_PID="/var/run/chkservices.pid"
-### END OF CUSTOM FIELDS
+CONFIG_FILE="/etc/chkservices/chkservices.conf"
 
-#Save this file on /usr/bin/
-#This is the program, it will be manitulated by:
-#/etc/init.d/chkservices
+# Load conf
+. $CONFIG_FILE
 
 # Log function
 LOG()
@@ -42,18 +35,16 @@ START_SERVICE() {
                 #XXX - Develop kill -9, remove pid, something like a powerfull restart
         fi
 }
-check_for_pid () {
+
+CHECK_FOR_PID () {
     if [ -e "$FILE_PID" ]
     then
-        LOG  "Uepas!! The Pid File $FILE_PID already exists! See you later!!"
+        LOG  "The Pid File $FILE_PID already exists! See how program was stopped, remove it and start again!"
         exit 1
     fi
 }
 
-# Main
-TEST_SERVICE()
-
-{
+TEST_SERVICE() {
 
 for i in `echo $SERVICES`; do
 
@@ -74,7 +65,10 @@ done
 sleep $INTERVAL
 
 }
-start_chkservices () {
+
+## Main
+#
+START_CHKSERVICES () {
     LOG "Starting up chkservices."
     while true
     do
@@ -82,6 +76,8 @@ start_chkservices () {
     done
 }
 
-check_for_pid
-start_chkservices &
+CHECK_FOR_PID
+START_CHKSERVICES &
 echo "$!" > "$FILE_PID"
+#
+##
