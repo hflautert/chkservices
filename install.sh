@@ -10,6 +10,11 @@ CONFIG_TARGET=/etc/chkservices
 cp "$BINARY" "$BINARY_TARGET"
 cp "$INITSCRIPT" "$INITSCRIPT_TARGET"
 
+if [ ! -e "$CONFIG_TARGET" ]
+then
+    mkdir -p "$CONFIG_TARGET"
+fi
+
 if [ -e $CONFIG_TARGET/$CONFIG ]
 then
     echo
