@@ -30,3 +30,8 @@ Enable startup and service management
 chkconfig chkservices on
 
 service chkservices start/stop
+
+Next Systems - systemd
+=====
+For CentOS 7.x and newer, use systemd configuration:
+https://wiki.archlinux.org/index.php/Systemd
